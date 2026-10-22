@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="fr" class="dark">
-<html lang="fr" class="dark"><head>
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SoundPad Pro - Sampler &amp; MPC Studio</title>
+  <title>SoundPad Pro - Sampler & MPC Studio (Collaboratif)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- GunDB pour la collaboration temps réel -->
+  <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -32,30 +34,16 @@
     }
   </script>
   <style>
-    /* Empêcher la sélection de texte et le zoom tactile sur frappes rapides */
     * {
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       -webkit-user-select: none;
     }
-    
-    /* Scrollbars personnalisées */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: rgba(15, 23, 42, 0.6);
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.4);
-    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
 
-    /* Animation dynamique de frappe sur le pad */
     .pad-btn {
       touch-action: manipulation;
       transition: transform 0.06s cubic-bezier(0.1, 1, 0.1, 1), box-shadow 0.06s ease, border-color 0.06s ease;
@@ -64,13 +52,9 @@
       transform: scale(0.96) translateY(2px);
       filter: brightness(1.35);
     }
-
-    /* Curseur de volume et pitch */
-    input[type=range] {
-      accent-color: #6366f1;
-    }
+    input[type=range] { accent-color: #6366f1; }
   </style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Outfit, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:JetBrains Mono, monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.pointer-events-auto{pointer-events:auto}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.bottom-1{bottom:0.25rem}.right-2{right:0.5rem}.right-5{right:1.25rem}.top-0{top:0px}.top-1{top:0.25rem}.top-20{top:5rem}.z-40{z-index:40}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.my-auto{margin-top:auto;margin-bottom:auto}.mb-1{margin-bottom:0.25rem}.mb-1\.5{margin-bottom:0.375rem}.mt-0\.5{margin-top:0.125rem}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-1\.5{height:0.375rem}.h-10{height:2.5rem}.h-14{height:3.5rem}.h-2{height:0.5rem}.h-3\.5{height:0.875rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-3{height:0.75rem}.min-h-screen{min-height:100vh}.w-10{width:2.5rem}.w-11{width:2.75rem}.w-16{width:4rem}.w-2{width:0.5rem}.w-3\.5{width:0.875rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-8{width:2rem}.w-9{width:2.25rem}.w-full{width:100%}.w-3{width:0.75rem}.max-w-7xl{max-width:80rem}.max-w-md{max-width:28rem}.max-w-sm{max-width:24rem}.max-w-xs{max-width:20rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;user-select:none}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-stretch{align-items:stretch}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-x-hidden{overflow-x:hidden}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.whitespace-nowrap{white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.rounded-md{border-radius:0.375rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-amber-500\/30{border-color:rgb(245 158 11 / 0.3)}.border-emerald-500\/30{border-color:rgb(16 185 129 / 0.3)}.border-indigo-500{--tw-border-opacity:1;border-color:rgb(99 102 241 / var(--tw-border-opacity, 1))}.border-indigo-500\/30{border-color:rgb(99 102 241 / 0.3)}.border-rose-500\/30{border-color:rgb(244 63 94 / 0.3)}.border-slate-700{--tw-border-opacity:1;border-color:rgb(51 65 85 / var(--tw-border-opacity, 1))}.border-slate-800{--tw-border-opacity:1;border-color:rgb(30 41 59 / var(--tw-border-opacity, 1))}.border-slate-800\/80{border-color:rgb(30 41 59 / 0.8)}.border-slate-900{--tw-border-opacity:1;border-color:rgb(15 23 42 / var(--tw-border-opacity, 1))}.border-transparent{border-color:transparent}.border-slate-700\/60{border-color:rgb(51 65 85 / 0.6)}.bg-amber-500\/10{background-color:rgb(245 158 11 / 0.1)}.bg-black\/70{background-color:rgb(0 0 0 / 0.7)}.bg-emerald-500{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.bg-emerald-500\/10{background-color:rgb(16 185 129 / 0.1)}.bg-emerald-500\/20{background-color:rgb(16 185 129 / 0.2)}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105 / var(--tw-bg-opacity, 1))}.bg-indigo-500\/20{background-color:rgb(99 102 241 / 0.2)}.bg-indigo-600{--tw-bg-opacity:1;background-color:rgb(79 70 229 / var(--tw-bg-opacity, 1))}.bg-indigo-600\/20{background-color:rgb(79 70 229 / 0.2)}.bg-indigo-600\/30{background-color:rgb(79 70 229 / 0.3)}.bg-rose-500{--tw-bg-opacity:1;background-color:rgb(244 63 94 / var(--tw-bg-opacity, 1))}.bg-rose-500\/10{background-color:rgb(244 63 94 / 0.1)}.bg-slate-700{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.bg-slate-800\/90{background-color:rgb(30 41 59 / 0.9)}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-slate-900\/40{background-color:rgb(15 23 42 / 0.4)}.bg-slate-900\/60{background-color:rgb(15 23 42 / 0.6)}.bg-slate-900\/90{background-color:rgb(15 23 42 / 0.9)}.bg-slate-950{--tw-bg-opacity:1;background-color:rgb(2 6 23 / var(--tw-bg-opacity, 1))}.bg-slate-950\/60{background-color:rgb(2 6 23 / 0.6)}.bg-slate-950\/80{background-color:rgb(2 6 23 / 0.8)}.bg-slate-950\/90{background-color:rgb(2 6 23 / 0.9)}.bg-indigo-700{--tw-bg-opacity:1;background-color:rgb(67 56 202 / var(--tw-bg-opacity, 1))}.bg-slate-800\/80{background-color:rgb(30 41 59 / 0.8)}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.bg-gradient-to-tr{background-image:linear-gradient(to top right, var(--tw-gradient-stops))}.bg-gradient-to-b{background-image:linear-gradient(to bottom, var(--tw-gradient-stops))}.from-indigo-600{--tw-gradient-from:#4f46e5 var(--tw-gradient-from-position);--tw-gradient-to:rgb(79 70 229 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-white{--tw-gradient-from:#fff var(--tw-gradient-from-position);--tw-gradient-to:rgb(255 255 255 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-slate-900{--tw-gradient-from:#0f172a var(--tw-gradient-from-position);--tw-gradient-to:rgb(15 23 42 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-purple-600{--tw-gradient-to:rgb(147 51 234 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #9333ea var(--tw-gradient-via-position), var(--tw-gradient-to)}.via-slate-200{--tw-gradient-to:rgb(226 232 240 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #e2e8f0 var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-indigo-300{--tw-gradient-to:#a5b4fc var(--tw-gradient-to-position)}.to-pink-500{--tw-gradient-to:#ec4899 var(--tw-gradient-to-position)}.to-purple-600{--tw-gradient-to:#9333ea var(--tw-gradient-to-position)}.to-slate-950{--tw-gradient-to:#020617 var(--tw-gradient-to-position)}.bg-clip-text{-webkit-background-clip:text;background-clip:text}.fill-current{fill:currentColor}.p-1{padding:0.25rem}.p-2{padding:0.5rem}.p-2\.5{padding:0.625rem}.p-3{padding:0.75rem}.p-3\.5{padding:0.875rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.px-4{padding-left:1rem;padding-right:1rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.px-1{padding-left:0.25rem;padding-right:0.25rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.pb-1{padding-bottom:0.25rem}.pb-3{padding-bottom:0.75rem}.pt-0\.5{padding-top:0.125rem}.pt-1{padding-top:0.25rem}.pt-2{padding-top:0.5rem}.text-left{text-align:left}.text-center{text-align:center}.font-mono{font-family:JetBrains Mono, monospace}.font-sans{font-family:Outfit, sans-serif}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[9px\]{font-size:9px}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.tracking-tight{letter-spacing:-0.025em}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-indigo-300{--tw-text-opacity:1;color:rgb(165 180 252 / var(--tw-text-opacity, 1))}.text-indigo-400{--tw-text-opacity:1;color:rgb(129 140 248 / var(--tw-text-opacity, 1))}.text-rose-300{--tw-text-opacity:1;color:rgb(253 164 175 / var(--tw-text-opacity, 1))}.text-rose-400{--tw-text-opacity:1;color:rgb(251 113 133 / var(--tw-text-opacity, 1))}.text-slate-100{--tw-text-opacity:1;color:rgb(241 245 249 / var(--tw-text-opacity, 1))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-transparent{color:transparent}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.opacity-0{opacity:0}.opacity-75{opacity:0.75}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-emerald-600\/20{--tw-shadow-color:rgb(5 150 105 / 0.2);--tw-shadow:var(--tw-shadow-colored)}.shadow-indigo-500\/25{--tw-shadow-color:rgb(99 102 241 / 0.25);--tw-shadow:var(--tw-shadow-colored)}.shadow-indigo-600\/20{--tw-shadow-color:rgb(79 70 229 / 0.2);--tw-shadow:var(--tw-shadow-colored)}.shadow-indigo-600\/30{--tw-shadow-color:rgb(79 70 229 / 0.3);--tw-shadow:var(--tw-shadow-colored)}.ring-1{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.ring-white\/20{--tw-ring-color:rgb(255 255 255 / 0.2)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-150{transition-duration:150ms}.duration-75{transition-duration:75ms}.duration-100{transition-duration:100ms}.selection\:bg-indigo-500 *::selection{--tw-bg-opacity:1;background-color:rgb(99 102 241 / var(--tw-bg-opacity, 1))}.selection\:text-white *::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.selection\:bg-indigo-500::selection{--tw-bg-opacity:1;background-color:rgb(99 102 241 / var(--tw-bg-opacity, 1))}.selection\:text-white::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:scale-\[1\.02\]:hover{--tw-scale-x:1.02;--tw-scale-y:1.02;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:border-indigo-500\/50:hover{border-color:rgb(99 102 241 / 0.5)}.hover\:border-slate-700:hover{--tw-border-opacity:1;border-color:rgb(51 65 85 / var(--tw-border-opacity, 1))}.hover\:bg-amber-500\/20:hover{background-color:rgb(245 158 11 / 0.2)}.hover\:bg-emerald-500:hover{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.hover\:bg-emerald-500\/20:hover{background-color:rgb(16 185 129 / 0.2)}.hover\:bg-indigo-500:hover{--tw-bg-opacity:1;background-color:rgb(99 102 241 / var(--tw-bg-opacity, 1))}.hover\:bg-indigo-600\/30:hover{background-color:rgb(79 70 229 / 0.3)}.hover\:bg-indigo-600\/40:hover{background-color:rgb(79 70 229 / 0.4)}.hover\:bg-indigo-950\/20:hover{background-color:rgb(30 27 75 / 0.2)}.hover\:bg-rose-500\/20:hover{background-color:rgb(244 63 94 / 0.2)}.hover\:bg-slate-700:hover{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-800:hover{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-800\/80:hover{background-color:rgb(30 41 59 / 0.8)}.hover\:from-indigo-500:hover{--tw-gradient-from:#6366f1 var(--tw-gradient-from-position);--tw-gradient-to:rgb(99 102 241 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:to-purple-500:hover{--tw-gradient-to:#a855f7 var(--tw-gradient-to-position)}.hover\:text-indigo-400:hover{--tw-text-opacity:1;color:rgb(129 140 248 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus\:border-indigo-500:focus{--tw-border-opacity:1;border-color:rgb(99 102 241 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.active\:scale-\[0\.98\]:active{--tw-scale-x:0.98;--tw-scale-y:0.98;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.group:hover .group-hover\:border-slate-500{--tw-border-opacity:1;border-color:rgb(100 116 139 / var(--tw-border-opacity, 1))}.group:hover .group-hover\:bg-indigo-600\/20{background-color:rgb(79 70 229 / 0.2)}.group:hover .group-hover\:text-indigo-400{--tw-text-opacity:1;color:rgb(129 140 248 / var(--tw-text-opacity, 1))}.group:hover .group-hover\:text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.has-\[\:checked\]\:border-indigo-500:has(:checked){--tw-border-opacity:1;border-color:rgb(99 102 241 / var(--tw-border-opacity, 1))}.has-\[\:checked\]\:bg-indigo-600\/20:has(:checked){background-color:rgb(79 70 229 / 0.2)}.has-\[\:checked\]\:text-white:has(:checked){--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}@media (min-width: 640px){.sm\:block{display:block}.sm\:inline{display:inline}.sm\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.sm\:flex-row{flex-direction:row}.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}}@media (min-width: 768px){.md\:max-w-sm{max-width:24rem}.md\:flex-row{flex-direction:row}.md\:items-center{align-items:center}.md\:gap-3\.5{gap:0.875rem}.md\:p-3\.5{padding:0.875rem}.md\:p-4{padding:1rem}.md\:pb-0{padding-bottom:0px}.md\:text-sm{font-size:0.875rem;line-height:1.25rem}}@media (min-width: 1024px){.lg\:block{display:block}}</style></head>
+</head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans flex flex-col justify-between overflow-x-hidden selection:bg-indigo-500 selection:text-white">
 
   <!-- ================= TOP HEADER & MASTER CONTROLS ================= -->
@@ -80,14 +64,14 @@
       <!-- Brand & Titre -->
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/25 ring-1 ring-white/20">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="music-2" aria-hidden="true" class="lucide lucide-music-2 w-5 h-5 text-white"><path d="m19 6-5.2-3.9a.5.5 0 0 0-.8.4V18"></path><circle cx="9" cy="18" r="4"></circle></svg>
+          <i data-lucide="music-2" class="w-5 h-5 text-white"></i>
         </div>
         <div>
           <h1 class="text-lg font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent flex items-center gap-2">
             SoundPad Studio
-            <span class="text-[10px] font-mono uppercase bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full">MPC-16 PRO</span>
+            <span class="text-[10px] font-mono uppercase bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full">COLLAB' LIVE</span>
           </h1>
-          <p class="text-xs text-slate-400 font-medium hidden sm:block">Cliquez pour jouer • Recliquez pour stopper • Sauvegarde automatique</p>
+          <p class="text-xs text-slate-400 font-medium hidden sm:block">Partagé & Synchronisé en direct • Cliquez pour jouer/stopper</p>
         </div>
       </div>
 
@@ -105,6 +89,12 @@
       <!-- Quick Action Controls -->
       <div class="flex items-center gap-2 flex-wrap">
         
+        <!-- Live Sync Status -->
+        <div id="sync-badge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-xs font-semibold text-indigo-300 shadow-sm" title="Statut de synchronisation collaborative">
+          <span id="sync-led" class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+          <span id="sync-label">Sync Live...</span>
+        </div>
+
         <!-- Audio Status & Test Button -->
         <button id="btn-audio-status" title="Tester ou débloquer le son" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs font-semibold text-emerald-400 transition shadow-sm">
           <span id="audio-status-led" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -113,14 +103,14 @@
 
         <!-- Keyboard Layout Toggle -->
         <button id="btn-layout" title="Changer la disposition clavier (AZERTY / QWERTY)" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-medium text-slate-300 transition shadow-sm">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="keyboard" aria-hidden="true" class="lucide lucide-keyboard w-3.5 h-3.5 text-indigo-400"><path d="M10 8h.01"></path><path d="M12 12h.01"></path><path d="M14 8h.01"></path><path d="M16 12h.01"></path><path d="M18 8h.01"></path><path d="M6 8h.01"></path><path d="M7 16h10"></path><path d="M8 12h.01"></path><rect width="20" height="16" x="2" y="4" rx="2"></rect></svg>
+          <i data-lucide="keyboard" class="w-3.5 h-3.5 text-indigo-400"></i>
           <span id="layout-label">AZERTY</span>
         </button>
 
         <!-- Metronome -->
         <div class="flex items-center bg-slate-800/90 border border-slate-700 rounded-lg px-2.5 py-1 gap-1.5 shadow-sm">
           <button id="btn-metronome" class="text-slate-400 hover:text-indigo-400 transition" title="Activer / désactiver le métronome">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="timer" aria-hidden="true" class="lucide lucide-timer w-4 h-4"><line x1="10" x2="14" y1="2" y2="2"></line><line x1="12" x2="15" y1="14" y2="11"></line><circle cx="12" cy="14" r="8"></circle></svg>
+            <i data-lucide="timer" class="w-4 h-4"></i>
           </button>
           <div class="flex items-center gap-1">
             <span class="text-[10px] font-mono text-slate-400">BPM</span>
@@ -137,24 +127,24 @@
 
         <!-- Master Volume -->
         <div class="flex items-center gap-1.5 bg-slate-800/90 border border-slate-700 rounded-lg px-2.5 py-1.5" title="Volume général">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="volume-2" aria-hidden="true" class="lucide lucide-volume-2 w-3.5 h-3.5 text-slate-400"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path><path d="M19.364 18.364a9 9 0 0 0 0-12.728"></path></svg>
+          <i data-lucide="volume-2" class="w-3.5 h-3.5 text-slate-400"></i>
           <input type="range" id="master-volume" min="0" max="1" step="0.01" value="0.85" class="w-16 cursor-pointer h-1.5 bg-slate-700 rounded-lg">
         </div>
 
         <!-- Stop All Sounds Button -->
         <button id="btn-stop-all" title="Stopper tous les sons en cours" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold transition shadow-sm">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="square" aria-hidden="true" class="lucide lucide-square w-3.5 h-3.5 fill-current"><rect width="18" height="18" x="3" y="3" rx="2"></rect></svg>
+          <i data-lucide="square" class="w-3.5 h-3.5 fill-current"></i>
           <span>Stop Tout</span>
         </button>
 
         <!-- Reset Kit Button -->
         <button id="btn-reset-kit" title="Restaurer les packs de sons d'origine" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="rotate-ccw" aria-hidden="true" class="lucide lucide-rotate-ccw w-3.5 h-3.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
         </button>
 
-        <!-- Export for GitHub / Download standalone HTML -->
+        <!-- Export for GitHub -->
         <button id="btn-export-site" title="Télécharger le fichier index.html autonome complet avec tous vos sons intégrés pour GitHub" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-semibold transition shadow-md shadow-indigo-600/30 hover:scale-[1.02] active:scale-[0.98]">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="download" aria-hidden="true" class="lucide lucide-download w-3.5 h-3.5"><path d="M12 15V3"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path></svg>
+          <i data-lucide="download" class="w-3.5 h-3.5"></i>
           <span>Exporter index.html</span>
         </button>
       </div>
@@ -163,7 +153,7 @@
   </header>
 
   <!-- ================= NOTIFICATION TOAST ================= -->
-  <div id="toast-container" class="fixed top-20 right-5 z-50 flex flex-col gap-2 pointer-events-none"><div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900/95 backdrop-blur-md border border-indigo-500/40 text-indigo-200 shadow-xl text-xs font-medium animate-in slide-in-from-right duration-200 pointer-events-auto"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="info" aria-hidden="true" class="lucide lucide-info w-4 h-4 shrink-0"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg><span>Génération du fichier index.html...</span></div></div>
+  <div id="toast-container" class="fixed top-20 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <!-- ================= MAIN MPC INTERFACE ================= -->
   <main class="max-w-7xl mx-auto w-full px-4 py-4 flex-1 flex flex-col gap-4">
@@ -171,32 +161,16 @@
     <!-- ================= SOUND FOLDERS & PACKS BAR ================= -->
     <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-2xl shadow-lg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
       <!-- Folder tabs list -->
-      <div class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none" id="folder-tabs-container"><button class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shadow-sm bg-indigo-600 text-white shadow-indigo-600/30 ring-1 ring-white/20">
-          <span class="text-sm">🗿</span>
-          <span>MEMES &amp; Cultes</span>
-          <span class="text-[10px] opacity-75 px-1.5 py-0.2 rounded-full bg-indigo-700">16</span>
-        </button><button class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shadow-sm bg-slate-800/80 hover:bg-slate-800 text-slate-300 border border-slate-700/60">
-          <span class="text-sm">🤪</span>
-          <span>Bruitages &amp; Drôles</span>
-          <span class="text-[10px] opacity-75 px-1.5 py-0.2 rounded-full bg-slate-700">16</span>
-        </button><button class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shadow-sm bg-slate-800/80 hover:bg-slate-800 text-slate-300 border border-slate-700/60">
-          <span class="text-sm">🎵</span>
-          <span>Studio Beatmaker</span>
-          <span class="text-[10px] opacity-75 px-1.5 py-0.2 rounded-full bg-slate-700">16</span>
-        </button><button class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shadow-sm bg-slate-800/80 hover:bg-slate-800 text-slate-300 border border-slate-700/60">
-          <span class="text-sm">📁</span>
-          <span>Mes Sons Perso</span>
-          <span class="text-[10px] opacity-75 px-1.5 py-0.2 rounded-full bg-slate-700">16</span>
-        </button></div>
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none" id="folder-tabs-container"></div>
 
       <!-- Actions dossier : Nouveau / Supprimer -->
       <div class="flex items-center gap-2 shrink-0 justify-end">
         <button id="btn-delete-folder" title="Supprimer le dossier actif" class="items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-400 text-xs font-semibold transition flex">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="trash-2" aria-hidden="true" class="lucide lucide-trash-2 w-3.5 h-3.5"><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
           <span class="hidden sm:inline">Supprimer dossier</span>
         </button>
         <button id="btn-open-new-folder" class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 text-xs font-semibold transition shadow-sm hover:scale-[1.02] active:scale-[0.98]">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="folder-plus" aria-hidden="true" class="lucide lucide-folder-plus w-4 h-4"><path d="M12 10v6"></path><path d="M9 13h6"></path><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"></path></svg>
+          <i data-lucide="folder-plus" class="w-4 h-4"></i>
           <span>Nouveau dossier</span>
         </button>
       </div>
@@ -206,605 +180,29 @@
     <div id="drop-all-zone" class="border-2 border-dashed border-slate-800 hover:border-indigo-500/50 bg-slate-900/40 hover:bg-indigo-950/20 rounded-2xl p-3 md:p-3.5 text-center transition-all cursor-pointer group flex flex-col sm:flex-row items-center justify-between gap-3">
       <div class="flex items-center gap-3">
         <div class="w-9 h-9 rounded-xl bg-slate-800 group-hover:bg-indigo-600/20 flex items-center justify-center text-slate-400 group-hover:text-indigo-400 transition shrink-0">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload-cloud" aria-hidden="true" class="lucide lucide-upload-cloud w-5 h-5"><path d="M12 13v8"></path><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="m8 17 4-4 4 4"></path></svg>
+          <i data-lucide="upload-cloud" class="w-5 h-5"></i>
         </div>
         <div class="text-left">
           <p class="text-xs sm:text-sm font-semibold text-slate-200">Glisser-déposer vos fichiers audio ici (MP3, WAV, OGG, FLAC)</p>
-          <p class="text-[11px] text-slate-400">Glissez plusieurs fichiers à la fois pour remplir la grille, ou glissez un son sur un pad précis.</p>
+          <p class="text-[11px] text-slate-400">Glissez plusieurs fichiers à la fois pour remplir la grille. Vos amis les recevront en direct !</p>
         </div>
       </div>
       <div class="flex items-center gap-2 shrink-0">
         <button id="btn-load-files" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium shadow-md shadow-indigo-600/20 transition flex items-center gap-1.5">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="folder-open" aria-hidden="true" class="lucide lucide-folder-open w-3.5 h-3.5"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"></path></svg> Parcourir mes fichiers
+          <i data-lucide="folder-open" class="w-3.5 h-3.5"></i> Parcourir mes fichiers
         </button>
-        <input type="file" id="batch-file-input" multiple="" accept="audio/*" class="hidden">
+        <input type="file" id="batch-file-input" multiple accept="audio/*" class="hidden">
       </div>
     </div>
 
     <!-- 16 PADS GRID (4x4) -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-3.5 flex-1 select-none" id="pads-grid"><div id="pad-0" class="pad-btn relative group bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-slate-800 rounded-2xl p-3 md:p-4 flex flex-col justify-between shadow-lg cursor-pointer overflow-hidden transition-all duration-100 hover:border-slate-700 select-none" data-idx="0" style="--pad-glow-color: rgba(244,63,94,0.5); --pad-accent: #f43f5e;">
-          <div class="flex items-center justify-between w-full pointer-events-none">
-            <span class="text-[10px] font-mono font-bold text-slate-500 group-hover:text-slate-300 transition">
-              #01
-            </span>
-            <div class="flex items-center gap-1.5">
-              <span class="pad-key-badge px-2 py-0.5 rounded font-mono font-bold text-xs uppercase bg-slate-800 border border-slate-700 text-slate-300 group-hover:border-slate-500 shadow-sm transition">
-                &amp;
-              </span>
-              <button data-action="edit" data-idx="0" class="pointer-events-auto p-1 rounded-md text-slate-500 hover:text-white hover:bg-slate-800/80 transition" title="Paramètres du pad">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sliders" aria-hidden="true" class="lucide lucide-sliders w-3.5 h-3.5"><path d="M10 8h4"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M17 16h4"></path><path d="M19 12V3"></path><path d="M19 21v-5"></path><path d="M3 14h4"></path><path d="M5 10V3"></path><path d="M5 21v-7"></path></svg>
-              </button>
-            </div>
-          </div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-3.5 flex-1 select-none" id="pads-grid"></div>
 
-          <div class="my-auto py-2 flex flex-col items-center justify-center pointer-events-none">
-            <div class="pad-led w-3 h-3 rounded-full mb-1.5 bg-slate-800 transition-all duration-75"></div>
-            <p class="pad-title text-xs md:text-sm font-bold text-slate-200 text-center tracking-tight truncate w-full px-1">
-              💥 Vine Boom
-            </p>
-            <p class="pad-status text-[10px] text-slate-400 font-mono mt-0.5">
-              SHOT
-            </p>
-          </div>
-
-          <div class="flex items-center justify-between w-full pt-1 pointer-events-none">
-            <div class="flex items-center gap-1 text-[10px] font-mono text-slate-500">
-              <span class="pad-pitch-tag"></span>
-            </div>
-            <label data-action="quick-load" data-idx="0" class="pointer-events-auto cursor-pointer p-1 rounded text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition" title="Remplacer le son">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" aria-hidden="true" class="lucide lucide-upload w-3.5 h-3.5"><path d="M12 3v12"></path><path d="m17 8-5-5-5 5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg>
-              <input type="file" accept="audio/*" class="hidden pad-file-input" data-idx="0">
-            </label>
-          </div>
-
-          <div class="pad-glow absolute inset-0 pointer-events-none rounded-2xl opacity-0 transition-opacity duration-150" style="background: radial-gradient(circle, rgba(244, 63, 94, 0.5) 0%, transparent 70%);"></div>
-        </div><div id="pad-1" class="pad-btn relative group bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-slate-800 rounded-2xl p-3 md:p-4 flex flex-col justify-between shadow-lg cursor-pointer overflow-hidden transition-all duration-100 hover:border-slate-700 select-none" data-idx="1" style="--pad-glow-color: rgba(99,102,241,0.5); --pad-accent: #6366f1;">
-          <div class="flex items-center justify-between w-full pointer-events-none">
-            <span class="text-[10px] font-mono font-bold text-slate-500 group-hover:text-slate-300 transition">
-              #02
-            </span>
-            <div class="flex items-center gap-1.5">
-              <span class="pad-key-badge px-2 py-0.5 rounded font-mono font-bold text-xs uppercase bg-slate-800 border border-slate-700 text-slate-300 group-hover:border-slate-500 shadow-sm transition">
-                é
-              </span>
-              <button data-action="edit" data-idx="1" class="pointer-events-auto p-1 rounded-md text-slate-500 hover:text-white hover:bg-slate-800/80 transition" title="Paramètres du pad">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sliders" aria-hidden="true" class="lucide lucide-sliders w-3.5 h-3.5"><path d="M10 8h4"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M17 16h4"></path><path d="M19 12V3"></path><path d="M19 21v-5"></path><path d="M3 14h4"></path><path d="M5 10V3"></path><path d="M5 21v-7"></path></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="my-auto py-2 flex flex-col items-center justify-center pointer-events-none">
-            <div class="pad-led w-3 h-3 rounded-full mb-1.5 bg-slate-800 transition-all duration-75"></div>
-            <p class="pad-title text-xs md:text-sm font-bold text-slate-200 text-center tracking-tight truncate w-full px-1">
-              🗿 Bruh Moment
-            </p>
-            <p class="pad-status text-[10px] text-slate-400 font-mono mt-0.5">
-              SHOT
-            </p>
-          </div>
-
-          <div class="flex items-center justify-between w-full pt-1 pointer-events-none">
-            <div class="flex items-center gap-1 text-[10px] font-mono text-slate-500">
-              <span class="pad-pitch-tag"></span>
-            </div>
-            <label data-action="quick-load" data-idx="1" class="pointer-events-auto cursor-pointer p-1 rounded text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition" title="Remplacer le son">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" aria-hidden="true" class="lucide lucide-upload w-3.5 h-3.5"><path d="M12 3v12"></path><path d="m17 8-5-5-5 5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg>
-              <input type="file" accept="audio/*" class="hidden pad-file-input" data-idx="1">
-            </label>
-          </div>
-
-          <div class="pad-glow absolute inset-0 pointer-events-none rounded-2xl opacity-0 transition-opacity duration-150" style="background: radial-gradient(circle, rgba(99, 102, 241, 0.5) 0%, transparent 70%);"></div>
-        </div><div id="pad-2" class="pad-btn relative group bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-slate-800 rounded-2xl p-3 md:p-4 flex flex-col justify-between shadow-lg cursor-pointer overflow-hidden transition-all duration-100 hover:border-slate-700 select-none" data-idx="2" style="--pad-glow-color: rgba(245,158,11,0.5); --pad-accent: #f59e0b;">
-          <div class="flex items-center justify-between w-full pointer-events-none">
-            <span class="text-[10px] font-mono font-bold text-slate-500 group-hover:text-slate-300 transition">
-              #03
-            </span>
-            <div class="flex items-center gap-1.5">
-              <span class="pad-key-badge px-2 py-0.5 rounded font-mono font-bold text-xs uppercase bg-slate-800 border border-slate-700 text-slate-300 group-hover:border-slate-500 shadow-sm transition">
-                "
-              </span>
-              <button data-action="edit" data-idx="2" class="pointer-events-auto p-1 rounded-md text-slate-500 hover:text-white hover:bg-slate-800/80 transition" title="Paramètres du pad">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sliders" aria-hidden="true" class="lucide lucide-sliders w-3.5 h-3.5"><path d="M10 8h4"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M17 16h4"></path><path d="M19 12V3"></path><path d="M19 21v-5"></path><path d="M3 14h4"></path><path d="M5 10V3"></path><path d="M5 21v-7"></path></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="my-auto py-2 flex flex-col items-center justify-center pointer-events-none">
-            <div class="pad-led w-3 h-3 rounded-full mb-1.5 bg-slate-800 transition-all duration-75"></div>
-            <p class="pad-title text-xs md:text-sm font-bold text-slate-200 text-center tracking-tight truncate w-full px-1">
-              🤕 Roblox OOF
-            </p>
-            <p class="pad-status text-[10px] text-slate-400 font-mono mt-0.5">
-              SHOT
-            </p>
-          </div>
-
-          <div class="flex items-center justify-between w-full pt-1 pointer-events-none">
-            <div class="flex items-center gap-1 text-[10px] font-mono text-slate-500">
-              <span class="pad-pitch-tag"></span>
-            </div>
-            <label data-action="quick-load" data-idx="2" class="pointer-events-auto cursor-pointer p-1 rounded text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition" title="Remplacer le son">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" aria-hidden="true" class="lucide lucide-upload w-3.5 h-3.5"><path d="M12 3v12"></path><path d="m17 8-5-5-5 5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg>
-              <input type="file" accept="audio/*" class="hidden pad-file-input" data-idx="2">
-            </label>
-          </div>
-
-          <div class="pad-glow absolute inset-0 pointer-events-none rounded-2xl opacity-0 transition-opacity duration-150" style="background: radial-gradient(circle, rgba(245, 158, 11, 0.5) 0%, transparent 70%);"></div>
-        </div><div id="pad-3" class="pad-btn relative group bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-slate-800 rounded-2xl p-3 md:p-4 flex flex-col justify-between shadow-lg cursor-pointer overflow-hidden transition-all duration-100 hover:border-slate-700 select-none" data-idx="3" style="--pad-glow-color: rgba(16,185,129,0.5); --pad-accent: #10b981;">
-          <div class="flex items-center justify-between w-full pointer-events-none">
-            <span class="text-[10px] font-mono font-bold text-slate-500 group-hover:text-slate-300 transition">
-              #04
-            </span>
-            <div class="flex items-center gap-1.5">
-              <span class="pad-key-badge px-2 py-0.5 rounded font-mono font-bold text-xs uppercase bg-slate-800 border border-slate-700 text-slate-300 group-hover:border-slate-500 shadow-sm transition">
-                '
-              </span>
-              <button data-action="edit" data-idx="3" class="pointer-events-auto p-1 rounded-md text-slate-500 hover:text-white hover:bg-slate-800/80 transition" title="Paramètres du pad">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sliders" aria-hidden="true" class="lucide lucide-sliders w-3.5 h-3.5"><path d="M10 8h4"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M17 16h4"></path><path d="M19 12V3"></path><path d="M19 21v-5"></path><path d="M3 14h4"></path><path d="M5 10V3"></path><path d="M5 21v-7"></path></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="my-auto py-2 flex flex-col items-center justify-center pointer-events-none">
-            <div class="pad-led w-3 h-3 rounded-full mb-1.5 bg-slate-800 transition-all duration-75"></div>
-            <p class="pad-title text-xs md:text-sm font-bold text-slate-200 text-center tracking-tight truncate w-full px-1">
-              🔔 Taco Bell
-            </p>
-            <p class="pad-status text-[10px] text-slate-400 font-mono mt-0.5">
-              SHOT
-            </p>
-          </div>
-
-          <div class="flex items-center justify-between w-full pt-1 pointer-events-none">
-            <div class="flex items-center gap-1 text-[10px] font-mono text-slate-500">
-              <span class="pad-pitch-tag"></span>
-            </div>
-            <label data-action="quick-load" data-idx="3" class="pointer-events-auto cursor-pointer p-1 rounded text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition" title="Remplacer le son">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" aria-hidden="true" class="lucide lucide-upload w-3.5 h-3.5"><path d="M12 3v12"></path><path d="m17 8-5-5-5 5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg>
-              <input type="file" accept="audio/*" class="hidden pad-file-input" data-idx="3">
-            </label>
-          </div>
-
-          <div class="pad-glow absolute inset-0 pointer-events-none rounded-2xl opacity-0 transition-opacity duration-150" style="background: radial-gradient(circle, rgba(16, 185, 129, 0.5) 0%, transparent 70%);"></div>
-        </div><div id="pad-4" class="pad-btn relative group bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-slate-800 rounded-2xl p-3 md:p-4 flex flex-col justify-between shadow-lg cursor-pointer overflow-hidden transition-all duration-100 hover:border-slate-700 select-none" data-idx="4" style="--pad-glow-color: rgba(244,63,94,0.5); --pad-accent: #f43f5e;">
-          <div class="flex items-center justify-between w-full pointer-events-none">
-            <span class="text-[10px] font-mono font-bold text-slate-500 group-hover:text-slate-300 transition">
-              #05
-            </span>
-            <div class="flex items-center gap-1.5">
-              <span class="pad-key-badge px-2 py-0.5 rounded font-mono font-bold text-xs uppercase bg-slate-800 border border-slate-700 text-slate-300 group-hover:border-slate-500 shadow-sm transition">
-                a
-              </span>
-              <button data-action="edit" data-idx="4" class="pointer-events-auto p-1 rounded-md text-slate-500 hover:text-white hover:bg-slate-800/80 transition" title="Paramètres du pad">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sliders" aria-hidden="true" class="lucide lucide-sliders w-3.5 h-3.5"><path d="M10 8h4"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M17 16h4"></path><path d="M19 12V3"></path><path d="M19 21v-5"></path><path d="M3 14h4"></path><path d="M5 10V3"></path><path d="M5 21v-7"></path></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="my-auto py-2 flex flex-col items-center justify-center pointer-events-none">
-            <div class="pad-led w-3 h-3 rounded-full mb-1.5 bg-slate-800 transition-all duration-75"></div>
-            <p class="pad-title text-xs md:text-sm font-bold text-slate-200 text-center tracking-tight truncate w-full px-1">
-              🎺 Airhorn MLG
-            </p>
-            <p class="pad-status text-[10px] text-slate-400 font-mono mt-0.5">
-              SHOT
-            </p>
-          </div>
-
-          <div class="flex items-center justify-between w-full pt-1 pointer-events-none">
-            <div class="flex items-center gap-1 text-[10px] font-mono text-slate-500">
-              <span class="pad-pitch-tag"></span>
-            </div>
-            <label data-action="quick-load" data-idx="4" class="pointer-events-auto cursor-pointer p-1 rounded text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition" title="Remplacer le son">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" aria-hidden="true" class="lucide lucide-upload w-3.5 h-3.5"><path d="M12 3v12"></path><path d="m17 8-5-5-5 5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg>
-              <input type="file" accept="audio/*" class="hidden pad-file-input" data-idx="4">
-            </label>
-          </div>
-
-          <div class="pad-glow absolute inset-0 pointer-events-none rounded-2xl opacity-0 transition-opacity duration-150" style="background: radial-gradient(circle, rgba(244, 63, 94, 0.5) 0%, transparent 70%);"></div>
-        </div><div id="pad-5" class="pad-btn relative group bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-slate-800 rounded-2xl p-3 md:p-4 flex flex-col justify-between shadow-lg cursor-pointer overflow-hidden transition-all duration-100 hover:border-slate-700 select-none" data-idx="5" style="--pad-glow-color: rgba(236,72,153,0.5); --pad-accent: #ec4899;">
-          <div class="flex items-center justify-between w-full pointer-events-none">
-            <span class="text-[10px] font-mono font-bold text-slate-500 group-hover:text-slate-300 transition">
-              #06
-            </span>
-            <div class="flex items-center gap-1.5">
-              <span class="pad-key-badge px-2 py-0.5 rounded font-mono font-bold text-xs uppercase bg-slate-800 border border-slate-700 text-slate-300 group-hover:border-slate-500 shadow-sm transition">
-                z
-              </span>
-              <button data-action="edit" data-idx="5" class="pointer-events-auto p-1 rounded-md text-slate-500 hover:text-white hover:bg-slate-800/80 transition" title="Paramètres du pad">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sliders" aria-hidden="true" class="lucide lucide-sliders w-3.5 h-3.5"><path d="M10 8h4"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M17 16h4"></path><path d="M19 12V3"></path><path d="M19 21v-5"></path><path d="M3 14h4"></path><path d="M5 10V3"></path><path d="M5 21v-7"></path></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="my-auto py-2 flex flex-col items-center justify-center pointer-events-none">
-            <div class="pad-led w-3 h-3 rounded-full mb-1.5 bg-slate-800 transition-all duration-75"></div>
-            <p class="pad-title text-xs md:text-sm font-bold text-slate-200 text-center tracking-tight truncate w-full px-1">
-              😱 Dun Dun Dun !
-            </p>
-            <p class="pad-status text-[10px] text-slate-400 font-mono mt-0.5">
-              SHOT
-            </p>
-          </div>
-
-          <div class="flex items-center justify-between w-full pt-1 pointer-events-none">
-            <div class="flex items-center gap-1 text-[10px] font-mono text-slate-500">
-              <span class="pad-pitch-tag"></span>
-            </div>
-            <label data-action="quick-load" data-idx="5" class="pointer-events-auto cursor-pointer p-1 rounded text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition" title="Remplacer le son">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" aria-hidden="true" class="lucide lucide-upload w-3.5 h-3.5"><path d="M12 3v12"></path><path d="m17 8-5-5-5 5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg>
-              <input type="file" accept="audio/*" class="hidden pad-file-input" data-idx="5">
-            </label>
-          </div>
-
-          <div class="pad-glow absolute inset-0 pointer-events-none rounded-2xl opacity-0 transition-opacity duration-150" style="background: radial-gradient(circle, rgba(236, 72, 153, 0.5) 0%, transparent 70%);"></div>
-        </div><div id="pad-6" class="pad-btn relative group bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-slate-800 rounded-2xl p-3 md:p-4 flex flex-col justify-between shadow-lg cursor-pointer overflow-hidden transition-all duration-100 hover:border-slate-700 select-none" data-idx="6" style="--pad-glow-color: rgba(6,182,212,0.5); --pad-accent: #06b6d4;">
-          <div class="flex items-center justify-between w-full pointer-events-none">
-            <span class="text-[10px] font-mono font-bold text-slate-500 group-hover:text-slate-300 transition">
-              #07
-            </span>
-            <div class="flex items-center gap-1.5">
-              <span class="pad-key-badge px-2 py-0.5 rounded font-mono font-bold text-xs uppercase bg-slate-800 border border-slate-700 text-slate-300 group-hover:border-slate-500 shadow-sm transition">
-                e
-              </span>
-              <button data-action="edit" data-idx="6" class="pointer-events-auto p-1 rounded-md text-slate-500 hover:text-white hover:bg-slate-800/80 transition" title="Paramètres du pad">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sliders" aria-hidden="true" class="lucide lucide-sliders w-3.5 h-3.5"><path d="M10 8h4"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M17 16h4"></path><path d="M19 12V3"></path><path d="M19 21v-5"></path><path d="M3 14h4"></path><path d="M5 10V3"></path><path d="M5 21v-7"></path></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="my-auto py-2 flex flex-col items-center justify-center pointer-events-none">
-            <div class="pad-led w-3 h-3 rounded-full mb-1.5 bg-slate-800 transition-all duration-75"></div>
-            <p class="pad-title text-xs md:text-sm font-bold text-slate-200 text-center tracking-tight truncate w-full px-1">
-              📉 Sad Trombone
-            </p>
-            <p class="pad-status text-[10px] text-slate-400 font-mono mt-0.5">
-              SHOT
-            </p>
-          </div>
-
-          <div class="flex items-center justify-between w-full pt-1 pointer-events-none">
-            <div class="flex items-center gap-1 text-[10px] font-mono text-slate-500">
-              <span class="pad-pitch-tag"></span>
-            </div>
-            <label data-action="quick-load" data-idx="6" class="pointer-events-auto cursor-pointer p-1 rounded text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition" title="Remplacer le son">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" aria-hidden="true" class="lucide lucide-upload w-3.5 h-3.5"><path d="M12 3v12"></path><path d="m17 8-5-5-5 5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg>
-              <input type="file" accept="audio/*" class="hidden pad-file-input" data-idx="6">
-            </label>
-          </div>
-
-          <div class="pad-glow absolute inset-0 pointer-events-none rounded-2xl opacity-0 transition-opacity duration-150" style="background: radial-gradient(circle, rgba(6, 182, 212, 0.5) 0%, transparent 70%);"></div>
-        </div><div id="pad-7" class="pad-btn relative group bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-slate-800 rounded-2xl p-3 md:p-4 flex flex-col justify-between shadow-lg cursor-pointer overflow-hidden transition-all duration-100 hover:border-slate-700 select-none" data-idx="7" style="--pad-glow-color: rgba(245,158,11,0.5); --pad-accent: #f59e0b;">
-          <div class="flex items-center justify-between w-full pointer-events-none">
-            <span class="text-[10px] font-mono font-bold text-slate-500 group-hover:text-slate-300 transition">
-              #08
-            </span>
-            <div class="flex items-center gap-1.5">
-              <span class="pad-key-badge px-2 py-0.5 rounded font-mono font-bold text-xs uppercase bg-slate-800 border border-slate-700 text-slate-300 group-hover:border-slate-500 shadow-sm transition">
-                r
-              </span>
-              <button data-action="edit" data-idx="7" class="pointer-events-auto p-1 rounded-md text-slate-500 hover:text-white hover:bg-slate-800/80 transition" title="Paramètres du pad">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sliders" aria-hidden="true" class="lucide lucide-sliders w-3.5 h-3.5"><path d="M10 8h4"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M17 16h4"></path><path d="M19 12V3"></path><path d="M19 21v-5"></path><path d="M3 14h4"></path><path d="M5 10V3"></path><path d="M5 21v-7"></path></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="my-auto py-2 flex flex-col items-center justify-center pointer-events-none">
-            <div class="pad-led w-3 h-3 rounded-full mb-1.5 bg-slate-800 transition-all duration-75"></div>
-            <p class="pad-title text-xs md:text-sm font-bold text-slate-200 text-center tracking-tight truncate w-full px-1">
-              🪜 Tuyau Métal
-            </p>
-            <p class="pad-status text-[10px] text-slate-400 font-mono mt-0.5">
-              SHOT
-            </p>
-          </div>
-
-          <div class="flex items-center justify-between w-full pt-1 pointer-events-none">
-            <div class="flex items-center gap-1 text-[10px] font-mono text-slate-500">
-              <span class="pad-pitch-tag"></span>
-            </div>
-            <label data-action="quick-load" data-idx="7" class="pointer-events-auto cursor-pointer p-1 rounded text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition" title="Remplacer le son">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" aria-hidden="true" class="lucide lucide-upload w-3.5 h-3.5"><path d="M12 3v12"></path><path d="m17 8-5-5-5 5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg>
-              <input type="file" accept="audio/*" class="hidden pad-file-input" data-idx="7">
-            </label>
-          </div>
-
-          <div class="pad-glow absolute inset-0 pointer-events-none rounded-2xl opacity-0 transition-opacity duration-150" style="background: radial-gradient(circle, rgba(245, 158, 11, 0.5) 0%, transparent 70%);"></div>
-        </div><div id="pad-8" class="pad-btn relative group bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-slate-800 rounded-2xl p-3 md:p-4 flex flex-col justify-between shadow-lg cursor-pointer overflow-hidden transition-all duration-100 hover:border-slate-700 select-none" data-idx="8" style="--pad-glow-color: rgba(244,63,94,0.5); --pad-accent: #f43f5e;">
-          <div class="flex items-center justify-between w-full pointer-events-none">
-            <span class="text-[10px] font-mono font-bold text-slate-500 group-hover:text-slate-300 transition">
-              #09
-            </span>
-            <div class="flex items-center gap-1.5">
-              <span class="pad-key-badge px-2 py-0.5 rounded font-mono font-bold text-xs uppercase bg-slate-800 border border-slate-700 text-slate-300 group-hover:border-slate-500 shadow-sm transition">
-                q
-              </span>
-              <button data-action="edit" data-idx="8" class="pointer-events-auto p-1 rounded-md text-slate-500 hover:text-white hover:bg-slate-800/80 transition" title="Paramètres du pad">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sliders" aria-hidden="true" class="lucide lucide-sliders w-3.5 h-3.5"><path d="M10 8h4"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M17 16h4"></path><path d="M19 12V3"></path><path d="M19 21v-5"></path><path d="M3 14h4"></path><path d="M5 10V3"></path><path d="M5 21v-7"></path></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="my-auto py-2 flex flex-col items-center justify-center pointer-events-none">
-            <div class="pad-led w-3 h-3 rounded-full mb-1.5 bg-slate-800 transition-all duration-75"></div>
-            <p class="pad-title text-xs md:text-sm font-bold text-slate-200 text-center tracking-tight truncate w-full px-1">
-              ❌ Windows Error
-            </p>
-            <p class="pad-status text-[10px] text-slate-400 font-mono mt-0.5">
-              SHOT
-            </p>
-          </div>
-
-          <div class="flex items-center justify-between w-full pt-1 pointer-events-none">
-            <div class="flex items-center gap-1 text-[10px] font-mono text-slate-500">
-              <span class="pad-pitch-tag"></span>
-            </div>
-            <label data-action="quick-load" data-idx="8" class="pointer-events-auto cursor-pointer p-1 rounded text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition" title="Remplacer le son">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" aria-hidden="true" class="lucide lucide-upload w-3.5 h-3.5"><path d="M12 3v12"></path><path d="m17 8-5-5-5 5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg>
-              <input type="file" accept="audio/*" class="hidden pad-file-input" data-idx="8">
-            </label>
-          </div>
-
-          <div class="pad-glow absolute inset-0 pointer-events-none rounded-2xl opacity-0 transition-opacity duration-150" style="background: radial-gradient(circle, rgba(244, 63, 94, 0.5) 0%, transparent 70%);"></div>
-        </div><div id="pad-9" class="pad-btn relative group bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-slate-800 rounded-2xl p-3 md:p-4 flex flex-col justify-between shadow-lg cursor-pointer overflow-hidden transition-all duration-100 hover:border-slate-700 select-none" data-idx="9" style="--pad-glow-color: rgba(99,102,241,0.5); --pad-accent: #6366f1;">
-          <div class="flex items-center justify-between w-full pointer-events-none">
-            <span class="text-[10px] font-mono font-bold text-slate-500 group-hover:text-slate-300 transition">
-              #10
-            </span>
-            <div class="flex items-center gap-1.5">
-              <span class="pad-key-badge px-2 py-0.5 rounded font-mono font-bold text-xs uppercase bg-slate-800 border border-slate-700 text-slate-300 group-hover:border-slate-500 shadow-sm transition">
-                s
-              </span>
-              <button data-action="edit" data-idx="9" class="pointer-events-auto p-1 rounded-md text-slate-500 hover:text-white hover:bg-slate-800/80 transition" title="Paramètres du pad">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sliders" aria-hidden="true" class="lucide lucide-sliders w-3.5 h-3.5"><path d="M10 8h4"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M17 16h4"></path><path d="M19 12V3"></path><path d="M19 21v-5"></path><path d="M3 14h4"></path><path d="M5 10V3"></path><path d="M5 21v-7"></path></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="my-auto py-2 flex flex-col items-center justify-center pointer-events-none">
-            <div class="pad-led w-3 h-3 rounded-full mb-1.5 bg-slate-800 transition-all duration-75"></div>
-            <p class="pad-title text-xs md:text-sm font-bold text-slate-200 text-center tracking-tight truncate w-full px-1">
-              ❓ Huh ?! / What
-            </p>
-            <p class="pad-status text-[10px] text-slate-400 font-mono mt-0.5">
-              SHOT
-            </p>
-          </div>
-
-          <div class="flex items-center justify-between w-full pt-1 pointer-events-none">
-            <div class="flex items-center gap-1 text-[10px] font-mono text-slate-500">
-              <span class="pad-pitch-tag"></span>
-            </div>
-            <label data-action="quick-load" data-idx="9" class="pointer-events-auto cursor-pointer p-1 rounded text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition" title="Remplacer le son">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" aria-hidden="true" class="lucide lucide-upload w-3.5 h-3.5"><path d="M12 3v12"></path><path d="m17 8-5-5-5 5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg>
-              <input type="file" accept="audio/*" class="hidden pad-file-input" data-idx="9">
-            </label>
-          </div>
-
-          <div class="pad-glow absolute inset-0 pointer-events-none rounded-2xl opacity-0 transition-opacity duration-150" style="background: radial-gradient(circle, rgba(99, 102, 241, 0.5) 0%, transparent 70%);"></div>
-        </div><div id="pad-10" class="pad-btn relative group bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-slate-800 rounded-2xl p-3 md:p-4 flex flex-col justify-between shadow-lg cursor-pointer overflow-hidden transition-all duration-100 hover:border-slate-700 select-none" data-idx="10" style="--pad-glow-color: rgba(245,158,11,0.5); --pad-accent: #f59e0b;">
-          <div class="flex items-center justify-between w-full pointer-events-none">
-            <span class="text-[10px] font-mono font-bold text-slate-500 group-hover:text-slate-300 transition">
-              #11
-            </span>
-            <div class="flex items-center gap-1.5">
-              <span class="pad-key-badge px-2 py-0.5 rounded font-mono font-bold text-xs uppercase bg-slate-800 border border-slate-700 text-slate-300 group-hover:border-slate-500 shadow-sm transition">
-                d
-              </span>
-              <button data-action="edit" data-idx="10" class="pointer-events-auto p-1 rounded-md text-slate-500 hover:text-white hover:bg-slate-800/80 transition" title="Paramètres du pad">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sliders" aria-hidden="true" class="lucide lucide-sliders w-3.5 h-3.5"><path d="M10 8h4"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M17 16h4"></path><path d="M19 12V3"></path><path d="M19 21v-5"></path><path d="M3 14h4"></path><path d="M5 10V3"></path><path d="M5 21v-7"></path></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="my-auto py-2 flex flex-col items-center justify-center pointer-events-none">
-            <div class="pad-led w-3 h-3 rounded-full mb-1.5 bg-slate-800 transition-all duration-75"></div>
-            <p class="pad-title text-xs md:text-sm font-bold text-slate-200 text-center tracking-tight truncate w-full px-1">
-              💨 Prout Reverb
-            </p>
-            <p class="pad-status text-[10px] text-slate-400 font-mono mt-0.5">
-              SHOT
-            </p>
-          </div>
-
-          <div class="flex items-center justify-between w-full pt-1 pointer-events-none">
-            <div class="flex items-center gap-1 text-[10px] font-mono text-slate-500">
-              <span class="pad-pitch-tag"></span>
-            </div>
-            <label data-action="quick-load" data-idx="10" class="pointer-events-auto cursor-pointer p-1 rounded text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition" title="Remplacer le son">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" aria-hidden="true" class="lucide lucide-upload w-3.5 h-3.5"><path d="M12 3v12"></path><path d="m17 8-5-5-5 5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg>
-              <input type="file" accept="audio/*" class="hidden pad-file-input" data-idx="10">
-            </label>
-          </div>
-
-          <div class="pad-glow absolute inset-0 pointer-events-none rounded-2xl opacity-0 transition-opacity duration-150" style="background: radial-gradient(circle, rgba(245, 158, 11, 0.5) 0%, transparent 70%);"></div>
-        </div><div id="pad-11" class="pad-btn relative group bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-slate-800 rounded-2xl p-3 md:p-4 flex flex-col justify-between shadow-lg cursor-pointer overflow-hidden transition-all duration-100 hover:border-slate-700 select-none" data-idx="11" style="--pad-glow-color: rgba(245,158,11,0.5); --pad-accent: #f59e0b;">
-          <div class="flex items-center justify-between w-full pointer-events-none">
-            <span class="text-[10px] font-mono font-bold text-slate-500 group-hover:text-slate-300 transition">
-              #12
-            </span>
-            <div class="flex items-center gap-1.5">
-              <span class="pad-key-badge px-2 py-0.5 rounded font-mono font-bold text-xs uppercase bg-slate-800 border border-slate-700 text-slate-300 group-hover:border-slate-500 shadow-sm transition">
-                f
-              </span>
-              <button data-action="edit" data-idx="11" class="pointer-events-auto p-1 rounded-md text-slate-500 hover:text-white hover:bg-slate-800/80 transition" title="Paramètres du pad">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sliders" aria-hidden="true" class="lucide lucide-sliders w-3.5 h-3.5"><path d="M10 8h4"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M17 16h4"></path><path d="M19 12V3"></path><path d="M19 21v-5"></path><path d="M3 14h4"></path><path d="M5 10V3"></path><path d="M5 21v-7"></path></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="my-auto py-2 flex flex-col items-center justify-center pointer-events-none">
-            <div class="pad-led w-3 h-3 rounded-full mb-1.5 bg-slate-800 transition-all duration-75"></div>
-            <p class="pad-title text-xs md:text-sm font-bold text-slate-200 text-center tracking-tight truncate w-full px-1">
-              🚂 Train Tchou
-            </p>
-            <p class="pad-status text-[10px] text-slate-400 font-mono mt-0.5">
-              SHOT
-            </p>
-          </div>
-
-          <div class="flex items-center justify-between w-full pt-1 pointer-events-none">
-            <div class="flex items-center gap-1 text-[10px] font-mono text-slate-500">
-              <span class="pad-pitch-tag"></span>
-            </div>
-            <label data-action="quick-load" data-idx="11" class="pointer-events-auto cursor-pointer p-1 rounded text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition" title="Remplacer le son">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" aria-hidden="true" class="lucide lucide-upload w-3.5 h-3.5"><path d="M12 3v12"></path><path d="m17 8-5-5-5 5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg>
-              <input type="file" accept="audio/*" class="hidden pad-file-input" data-idx="11">
-            </label>
-          </div>
-
-          <div class="pad-glow absolute inset-0 pointer-events-none rounded-2xl opacity-0 transition-opacity duration-150" style="background: radial-gradient(circle, rgba(245, 158, 11, 0.5) 0%, transparent 70%);"></div>
-        </div><div id="pad-12" class="pad-btn relative group bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-slate-800 rounded-2xl p-3 md:p-4 flex flex-col justify-between shadow-lg cursor-pointer overflow-hidden transition-all duration-100 hover:border-slate-700 select-none" data-idx="12" style="--pad-glow-color: rgba(99,102,241,0.5); --pad-accent: #6366f1;">
-          <div class="flex items-center justify-between w-full pointer-events-none">
-            <span class="text-[10px] font-mono font-bold text-slate-500 group-hover:text-slate-300 transition">
-              #13
-            </span>
-            <div class="flex items-center gap-1.5">
-              <span class="pad-key-badge px-2 py-0.5 rounded font-mono font-bold text-xs uppercase bg-slate-800 border border-slate-700 text-slate-300 group-hover:border-slate-500 shadow-sm transition">
-                w
-              </span>
-              <button data-action="edit" data-idx="12" class="pointer-events-auto p-1 rounded-md text-slate-500 hover:text-white hover:bg-slate-800/80 transition" title="Paramètres du pad">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sliders" aria-hidden="true" class="lucide lucide-sliders w-3.5 h-3.5"><path d="M10 8h4"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M17 16h4"></path><path d="M19 12V3"></path><path d="M19 21v-5"></path><path d="M3 14h4"></path><path d="M5 10V3"></path><path d="M5 21v-7"></path></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="my-auto py-2 flex flex-col items-center justify-center pointer-events-none">
-            <div class="pad-led w-3 h-3 rounded-full mb-1.5 bg-slate-800 transition-all duration-75"></div>
-            <p class="pad-title text-xs md:text-sm font-bold text-slate-200 text-center tracking-tight truncate w-full px-1">
-              👻 Ouhhhhhhh !
-            </p>
-            <p class="pad-status text-[10px] text-slate-400 font-mono mt-0.5">
-              SHOT
-            </p>
-          </div>
-
-          <div class="flex items-center justify-between w-full pt-1 pointer-events-none">
-            <div class="flex items-center gap-1 text-[10px] font-mono text-slate-500">
-              <span class="pad-pitch-tag"></span>
-            </div>
-            <label data-action="quick-load" data-idx="12" class="pointer-events-auto cursor-pointer p-1 rounded text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition" title="Remplacer le son">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" aria-hidden="true" class="lucide lucide-upload w-3.5 h-3.5"><path d="M12 3v12"></path><path d="m17 8-5-5-5 5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg>
-              <input type="file" accept="audio/*" class="hidden pad-file-input" data-idx="12">
-            </label>
-          </div>
-
-          <div class="pad-glow absolute inset-0 pointer-events-none rounded-2xl opacity-0 transition-opacity duration-150" style="background: radial-gradient(circle, rgba(99, 102, 241, 0.5) 0%, transparent 70%);"></div>
-        </div><div id="pad-13" class="pad-btn relative group bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-slate-800 rounded-2xl p-3 md:p-4 flex flex-col justify-between shadow-lg cursor-pointer overflow-hidden transition-all duration-100 hover:border-slate-700 select-none" data-idx="13" style="--pad-glow-color: rgba(16,185,129,0.5); --pad-accent: #10b981;">
-          <div class="flex items-center justify-between w-full pointer-events-none">
-            <span class="text-[10px] font-mono font-bold text-slate-500 group-hover:text-slate-300 transition">
-              #14
-            </span>
-            <div class="flex items-center gap-1.5">
-              <span class="pad-key-badge px-2 py-0.5 rounded font-mono font-bold text-xs uppercase bg-slate-800 border border-slate-700 text-slate-300 group-hover:border-slate-500 shadow-sm transition">
-                x
-              </span>
-              <button data-action="edit" data-idx="13" class="pointer-events-auto p-1 rounded-md text-slate-500 hover:text-white hover:bg-slate-800/80 transition" title="Paramètres du pad">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sliders" aria-hidden="true" class="lucide lucide-sliders w-3.5 h-3.5"><path d="M10 8h4"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M17 16h4"></path><path d="M19 12V3"></path><path d="M19 21v-5"></path><path d="M3 14h4"></path><path d="M5 10V3"></path><path d="M5 21v-7"></path></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="my-auto py-2 flex flex-col items-center justify-center pointer-events-none">
-            <div class="pad-led w-3 h-3 rounded-full mb-1.5 bg-slate-800 transition-all duration-75"></div>
-            <p class="pad-title text-xs md:text-sm font-bold text-slate-200 text-center tracking-tight truncate w-full px-1">
-              👏 Bravo / Applauds
-            </p>
-            <p class="pad-status text-[10px] text-slate-400 font-mono mt-0.5">
-              SHOT
-            </p>
-          </div>
-
-          <div class="flex items-center justify-between w-full pt-1 pointer-events-none">
-            <div class="flex items-center gap-1 text-[10px] font-mono text-slate-500">
-              <span class="pad-pitch-tag"></span>
-            </div>
-            <label data-action="quick-load" data-idx="13" class="pointer-events-auto cursor-pointer p-1 rounded text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition" title="Remplacer le son">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" aria-hidden="true" class="lucide lucide-upload w-3.5 h-3.5"><path d="M12 3v12"></path><path d="m17 8-5-5-5 5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg>
-              <input type="file" accept="audio/*" class="hidden pad-file-input" data-idx="13">
-            </label>
-          </div>
-
-          <div class="pad-glow absolute inset-0 pointer-events-none rounded-2xl opacity-0 transition-opacity duration-150" style="background: radial-gradient(circle, rgba(16, 185, 129, 0.5) 0%, transparent 70%);"></div>
-        </div><div id="pad-14" class="pad-btn relative group bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-slate-800 rounded-2xl p-3 md:p-4 flex flex-col justify-between shadow-lg cursor-pointer overflow-hidden transition-all duration-100 hover:border-slate-700 select-none" data-idx="14" style="--pad-glow-color: rgba(245,158,11,0.5); --pad-accent: #f59e0b;">
-          <div class="flex items-center justify-between w-full pointer-events-none">
-            <span class="text-[10px] font-mono font-bold text-slate-500 group-hover:text-slate-300 transition">
-              #15
-            </span>
-            <div class="flex items-center gap-1.5">
-              <span class="pad-key-badge px-2 py-0.5 rounded font-mono font-bold text-xs uppercase bg-slate-800 border border-slate-700 text-slate-300 group-hover:border-slate-500 shadow-sm transition">
-                c
-              </span>
-              <button data-action="edit" data-idx="14" class="pointer-events-auto p-1 rounded-md text-slate-500 hover:text-white hover:bg-slate-800/80 transition" title="Paramètres du pad">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sliders" aria-hidden="true" class="lucide lucide-sliders w-3.5 h-3.5"><path d="M10 8h4"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M17 16h4"></path><path d="M19 12V3"></path><path d="M19 21v-5"></path><path d="M3 14h4"></path><path d="M5 10V3"></path><path d="M5 21v-7"></path></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="my-auto py-2 flex flex-col items-center justify-center pointer-events-none">
-            <div class="pad-led w-3 h-3 rounded-full mb-1.5 bg-slate-800 transition-all duration-75"></div>
-            <p class="pad-title text-xs md:text-sm font-bold text-slate-200 text-center tracking-tight truncate w-full px-1">
-              🐶 Chien Wouaf
-            </p>
-            <p class="pad-status text-[10px] text-slate-400 font-mono mt-0.5">
-              SHOT
-            </p>
-          </div>
-
-          <div class="flex items-center justify-between w-full pt-1 pointer-events-none">
-            <div class="flex items-center gap-1 text-[10px] font-mono text-slate-500">
-              <span class="pad-pitch-tag"></span>
-            </div>
-            <label data-action="quick-load" data-idx="14" class="pointer-events-auto cursor-pointer p-1 rounded text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition" title="Remplacer le son">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" aria-hidden="true" class="lucide lucide-upload w-3.5 h-3.5"><path d="M12 3v12"></path><path d="m17 8-5-5-5 5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg>
-              <input type="file" accept="audio/*" class="hidden pad-file-input" data-idx="14">
-            </label>
-          </div>
-
-          <div class="pad-glow absolute inset-0 pointer-events-none rounded-2xl opacity-0 transition-opacity duration-150" style="background: radial-gradient(circle, rgba(245, 158, 11, 0.5) 0%, transparent 70%);"></div>
-        </div><div id="pad-15" class="pad-btn relative group bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-slate-800 rounded-2xl p-3 md:p-4 flex flex-col justify-between shadow-lg cursor-pointer overflow-hidden transition-all duration-100 hover:border-slate-700 select-none" data-idx="15" style="--pad-glow-color: rgba(244,63,94,0.5); --pad-accent: #f43f5e;">
-          <div class="flex items-center justify-between w-full pointer-events-none">
-            <span class="text-[10px] font-mono font-bold text-slate-500 group-hover:text-slate-300 transition">
-              #16
-            </span>
-            <div class="flex items-center gap-1.5">
-              <span class="pad-key-badge px-2 py-0.5 rounded font-mono font-bold text-xs uppercase bg-slate-800 border border-slate-700 text-slate-300 group-hover:border-slate-500 shadow-sm transition">
-                v
-              </span>
-              <button data-action="edit" data-idx="15" class="pointer-events-auto p-1 rounded-md text-slate-500 hover:text-white hover:bg-slate-800/80 transition" title="Paramètres du pad">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sliders" aria-hidden="true" class="lucide lucide-sliders w-3.5 h-3.5"><path d="M10 8h4"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M17 16h4"></path><path d="M19 12V3"></path><path d="M19 21v-5"></path><path d="M3 14h4"></path><path d="M5 10V3"></path><path d="M5 21v-7"></path></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="my-auto py-2 flex flex-col items-center justify-center pointer-events-none">
-            <div class="pad-led w-3 h-3 rounded-full mb-1.5 bg-slate-800 transition-all duration-75"></div>
-            <p class="pad-title text-xs md:text-sm font-bold text-slate-200 text-center tracking-tight truncate w-full px-1">
-              🤮 Vomit Beurk
-            </p>
-            <p class="pad-status text-[10px] text-slate-400 font-mono mt-0.5">
-              SHOT
-            </p>
-          </div>
-
-          <div class="flex items-center justify-between w-full pt-1 pointer-events-none">
-            <div class="flex items-center gap-1 text-[10px] font-mono text-slate-500">
-              <span class="pad-pitch-tag"></span>
-            </div>
-            <label data-action="quick-load" data-idx="15" class="pointer-events-auto cursor-pointer p-1 rounded text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition" title="Remplacer le son">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" aria-hidden="true" class="lucide lucide-upload w-3.5 h-3.5"><path d="M12 3v12"></path><path d="m17 8-5-5-5 5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg>
-              <input type="file" accept="audio/*" class="hidden pad-file-input" data-idx="15">
-            </label>
-          </div>
-
-          <div class="pad-glow absolute inset-0 pointer-events-none rounded-2xl opacity-0 transition-opacity duration-150" style="background: radial-gradient(circle, rgba(244, 63, 94, 0.5) 0%, transparent 70%);"></div>
-        </div></div>
-
-    <!-- Live Recording Playback Bar (Masqué sauf si un enregistrement est en boîte) -->
+    <!-- Live Recording Playback Bar -->
     <div id="recording-bar" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-3.5 shadow-xl flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="check" aria-hidden="true" class="lucide lucide-check w-4 h-4"><path d="M20 6 9 17l-5-5"></path></svg>
+          <i data-lucide="check" class="w-4 h-4"></i>
         </div>
         <div>
           <h4 class="text-xs sm:text-sm font-semibold text-white">Prise audio enregistrée !</h4>
@@ -812,9 +210,9 @@
         </div>
       </div>
       <div class="flex items-center gap-3">
-        <audio id="audio-preview" controls="" class="h-8 rounded bg-slate-800"></audio>
+        <audio id="audio-preview" controls class="h-8 rounded bg-slate-800"></audio>
         <a id="btn-download-rec" download="soundpad-session.webm" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-emerald-600/20 transition">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="download" aria-hidden="true" class="lucide lucide-download w-3.5 h-3.5"><path d="M12 15V3"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path></svg> Télécharger
+          <i data-lucide="download" class="w-3.5 h-3.5"></i> Télécharger
         </a>
       </div>
     </div>
@@ -833,11 +231,11 @@
           </div>
           <div>
             <h3 class="text-sm font-bold text-white">Paramètres du Pad</h3>
-            <p class="text-[11px] text-slate-400" id="modal-pad-keyinfo">Assignation &amp; réglages</p>
+            <p class="text-[11px] text-slate-400" id="modal-pad-keyinfo">Assignation & réglages</p>
           </div>
         </div>
         <button id="modal-close" class="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" aria-hidden="true" class="lucide lucide-x w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+          <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
@@ -860,12 +258,12 @@
         <!-- Change Sound File Button -->
         <div class="flex gap-2">
           <label class="flex-1 cursor-pointer bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl py-2 px-3 text-xs font-medium text-slate-200 flex items-center justify-center gap-2 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="folder" aria-hidden="true" class="lucide lucide-folder w-3.5 h-3.5 text-indigo-400"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"></path></svg>
+            <i data-lucide="folder" class="w-3.5 h-3.5 text-indigo-400"></i>
             Changer de fichier audio
             <input type="file" id="modal-file-input" accept="audio/*" class="hidden">
           </label>
           <button id="modal-test-play" class="px-3.5 py-2 bg-indigo-600/30 hover:bg-indigo-600/40 border border-indigo-500/30 text-indigo-300 rounded-xl text-xs font-medium flex items-center gap-1.5 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="play" aria-hidden="true" class="lucide lucide-play w-3.5 h-3.5"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"></path></svg> Tester
+            <i data-lucide="play" class="w-3.5 h-3.5"></i> Tester
           </button>
         </div>
 
@@ -894,7 +292,7 @@
             <span class="text-[11px] font-medium text-slate-400 block mb-1">Mode de jeu</span>
             <div class="flex gap-2">
               <label class="flex-1 flex items-center justify-center gap-1 text-xs py-1 px-2 rounded-lg bg-slate-800 text-slate-300 cursor-pointer border border-transparent has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-600/20 has-[:checked]:text-white">
-                <input type="radio" name="modal-mode" value="oneshot" class="hidden" checked=""> Shot
+                <input type="radio" name="modal-mode" value="oneshot" class="hidden" checked> Shot
               </label>
               <label class="flex-1 flex items-center justify-center gap-1 text-xs py-1 px-2 rounded-lg bg-slate-800 text-slate-300 cursor-pointer border border-transparent has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-600/20 has-[:checked]:text-white">
                 <input type="radio" name="modal-mode" value="loop" class="hidden"> Loop
@@ -904,9 +302,7 @@
 
           <div class="space-y-1 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
             <span class="text-[11px] font-medium text-slate-400 block mb-1">Couleur LED</span>
-            <div class="flex items-center gap-1.5 pt-0.5" id="color-picker-container">
-              <!-- Boutons de couleur -->
-            </div>
+            <div class="flex items-center gap-1.5 pt-0.5" id="color-picker-container"></div>
           </div>
         </div>
 
@@ -927,11 +323,11 @@
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-5 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <div class="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="folder-plus" aria-hidden="true" class="lucide lucide-folder-plus w-5 h-5 text-indigo-400"><path d="M12 10v6"></path><path d="M9 13h6"></path><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"></path></svg>
+          <i data-lucide="folder-plus" class="w-5 h-5 text-indigo-400"></i>
           <h3 class="text-sm font-bold text-white">Nouveau dossier de sons</h3>
         </div>
         <button id="close-folder-modal" class="text-slate-400 hover:text-white p-1">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" aria-hidden="true" class="lucide lucide-x w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+          <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
@@ -970,19 +366,16 @@
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
       <div class="flex items-center gap-2">
         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span>SoundPad Studio • Moteur Web Audio 48kHz • Prêt pour GitHub Pages</span>
+        <span>SoundPad Studio Collab' • Moteur Web Audio 48kHz & GunDB Realtime</span>
       </div>
       <div>
-        <span>Astuce : Vous pouvez utiliser les raccourcis clavier pour déclencher et couper les sons !</span>
+        <span>Astuce : Tous vos changements (nouveaux dossiers, sons importés) sont synchronisés en direct !</span>
       </div>
     </div>
   </footer>
 
   <!-- ================= CORE APPLICATION LOGIC ================= -->
   <script>
-    /* =====================================================================
-       1. GLOBAL STATE & SOUND ENGINE SETUP
-       ===================================================================== */
     let audioCtx = null;
     let masterGain = null;
     let analyser = null;
@@ -993,21 +386,25 @@
     let recordStartTime = 0;
     let recordTimerInterval = null;
 
-    // Metronome
     let metronomeActive = false;
     let metronomeInterval = null;
 
-    // Emplacement pour stocker les données packées lors de l'export GitHub
-    window.INITIAL_PACKED_DATA = [{"id":"memes","name":"MEMES & Cultes","emoji":"🗿","description":"Sons cultes, répliques & mèmes internet","pads":[{"id":0,"name":"💥 Vine Boom","colorIdx":5,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"vine_boom","dataUrl":null},{"id":1,"name":"🗿 Bruh Moment","colorIdx":0,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"bruh","dataUrl":null},{"id":2,"name":"🤕 Roblox OOF","colorIdx":3,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"roblox_oof","dataUrl":null},{"id":3,"name":"🔔 Taco Bell","colorIdx":1,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"taco_bell","dataUrl":null},{"id":4,"name":"🎺 Airhorn MLG","colorIdx":5,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"airhorn","dataUrl":null},{"id":5,"name":"😱 Dun Dun Dun !","colorIdx":2,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"dramatic","dataUrl":null},{"id":6,"name":"📉 Sad Trombone","colorIdx":4,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"sad_trombone","dataUrl":null},{"id":7,"name":"🪜 Tuyau Métal","colorIdx":3,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"metal_pipe","dataUrl":null},{"id":8,"name":"❌ Windows Error","colorIdx":5,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"win_error","dataUrl":null},{"id":9,"name":"❓ Huh ?! / What","colorIdx":0,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"huh","dataUrl":null},{"id":10,"name":"💨 Prout Reverb","colorIdx":3,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"fart","dataUrl":null},{"id":11,"name":"🚂 Train Tchou","colorIdx":3,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"train","dataUrl":null},{"id":12,"name":"👻 Ouhhhhhhh !","colorIdx":0,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"ouhh","dataUrl":null},{"id":13,"name":"👏 Bravo / Applauds","colorIdx":1,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"applause","dataUrl":null},{"id":14,"name":"🐶 Chien Wouaf","colorIdx":3,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"dog","dataUrl":null},{"id":15,"name":"🤮 Vomit Beurk","colorIdx":5,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"vomit","dataUrl":null}]},{"id":"sfx_drole","name":"Bruitages & Drôles","emoji":"🤪","description":"Sons amusants, mèmes et bruitages du quotidien","pads":[{"id":0,"name":"🚂 Train Tchou","colorIdx":3,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"train","dataUrl":null},{"id":1,"name":"👻 Ouhhhhhhh !","colorIdx":0,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"ouhh","dataUrl":null},{"id":2,"name":"👏 Bravo / Applauds","colorIdx":1,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"applause","dataUrl":null},{"id":3,"name":"🤮 Vomit Beurk","colorIdx":5,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"vomit","dataUrl":null},{"id":4,"name":"🐶 Chien Wouaf","colorIdx":3,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"dog","dataUrl":null},{"id":5,"name":"🐱 Chat Miaou","colorIdx":2,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"cat","dataUrl":null},{"id":6,"name":"🦗 Cigale Été","colorIdx":1,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"cicada","dataUrl":null},{"id":7,"name":"⚡ Orage Tonnerre","colorIdx":4,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"thunder","dataUrl":null},{"id":8,"name":"🌧️ Pluie Averse","colorIdx":4,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"rain","dataUrl":null},{"id":9,"name":"🌀 Boing Ressort","colorIdx":0,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"boing","dataUrl":null},{"id":10,"name":"📣 Klaxon Airhorn","colorIdx":5,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"airhorn","dataUrl":null},{"id":11,"name":"💨 Prout Cartoon","colorIdx":3,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"fart","dataUrl":null},{"id":12,"name":"🦆 Canard Coin","colorIdx":3,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"duck","dataUrl":null},{"id":13,"name":"😈 Rire Diabolique","colorIdx":5,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"evil_laugh","dataUrl":null},{"id":14,"name":"🔔 Cloche Ting","colorIdx":1,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"bell","dataUrl":null},{"id":15,"name":"💥 Cri Wilhelm","colorIdx":2,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"scream","dataUrl":null}]},{"id":"musical_beat","name":"Studio Beatmaker","emoji":"🎵","description":"Kit de batterie et instruments Hip-Hop / Électro","pads":[{"id":0,"name":"Kick 808","colorIdx":0,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"kick","dataUrl":null},{"id":1,"name":"Snare Snappy","colorIdx":1,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"snare","dataUrl":null},{"id":2,"name":"Clap Crisp","colorIdx":2,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"clap","dataUrl":null},{"id":3,"name":"Rimshot","colorIdx":3,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"rim","dataUrl":null},{"id":4,"name":"Hi-Hat Closed","colorIdx":4,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"hihat_c","dataUrl":null},{"id":5,"name":"Hi-Hat Open","colorIdx":4,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"hihat_o","dataUrl":null},{"id":6,"name":"Shaker Groove","colorIdx":0,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"shaker","dataUrl":null},{"id":7,"name":"Tom Low","colorIdx":1,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"tom_low","dataUrl":null},{"id":8,"name":"Tom High","colorIdx":2,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"tom_high","dataUrl":null},{"id":9,"name":"Crash Cymbal","colorIdx":3,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"crash","dataUrl":null},{"id":10,"name":"808 Sub Bass","colorIdx":5,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"sub","dataUrl":null},{"id":11,"name":"Synth Stab","colorIdx":0,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"synth_stab","dataUrl":null},{"id":12,"name":"Chords Rhodes","colorIdx":1,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"chord","dataUrl":null},{"id":13,"name":"Laser Zap","colorIdx":2,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"laser","dataUrl":null},{"id":14,"name":"Vocal Chop","colorIdx":3,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"vocal","dataUrl":null},{"id":15,"name":"Impact Sub","colorIdx":5,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"impact","dataUrl":null}]},{"id":"perso_kit","name":"Mes Sons Perso","emoji":"📁","description":"Dossier vide prêt à recevoir vos propres MP3/WAV","pads":[{"id":0,"name":"Pad #1","colorIdx":0,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"empty","dataUrl":null},{"id":1,"name":"Pad #2","colorIdx":1,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"empty","dataUrl":null},{"id":2,"name":"Pad #3","colorIdx":2,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"empty","dataUrl":null},{"id":3,"name":"Pad #4","colorIdx":3,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"empty","dataUrl":null},{"id":4,"name":"Pad #5","colorIdx":4,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"empty","dataUrl":null},{"id":5,"name":"Pad #6","colorIdx":5,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"empty","dataUrl":null},{"id":6,"name":"Pad #7","colorIdx":0,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"empty","dataUrl":null},{"id":7,"name":"Pad #8","colorIdx":1,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"empty","dataUrl":null},{"id":8,"name":"Pad #9","colorIdx":2,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"empty","dataUrl":null},{"id":9,"name":"Pad #10","colorIdx":3,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"empty","dataUrl":null},{"id":10,"name":"Pad #11","colorIdx":4,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"empty","dataUrl":null},{"id":11,"name":"Pad #12","colorIdx":5,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"empty","dataUrl":null},{"id":12,"name":"Pad #13","colorIdx":0,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"empty","dataUrl":null},{"id":13,"name":"Pad #14","colorIdx":1,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"empty","dataUrl":null},{"id":14,"name":"Pad #15","colorIdx":2,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"empty","dataUrl":null},{"id":15,"name":"Pad #16","colorIdx":3,"gain":1,"pitchSemitones":0,"mode":"oneshot","defaultType":"empty","dataUrl":null}]}];
+    window.INITIAL_PACKED_DATA = null;
 
-    // Keyboard mappings
+    // --- GUN DB COLLABORATIVE AGENT ---
+    const gun = Gun(['https://gun-manhattan.herokuapp.com/gun', 'https://peer.wallie.io/gun']);
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomId = urlParams.get('room') || 'soundpad-studio-master-v1';
+    const db = gun.get(roomId);
+
+    const userId = Math.random().toString(36).substring(2, 6).toUpperCase();
+
     const LAYOUTS = {
       AZERTY: ['&', 'é', '"', '\'', 'a', 'z', 'e', 'r', 'q', 's', 'd', 'f', 'w', 'x', 'c', 'v'],
       QWERTY: ['1', '2', '3', '4', 'q', 'w', 'e', 'r', 'a', 's', 'd', 'f', 'z', 'x', 'c', 'v']
     };
     let currentLayout = 'AZERTY';
 
-    // Color Presets for pads
     const COLOR_PRESETS = [
       { name: 'Indigo', hex: '#6366f1', glow: 'rgba(99,102,241,0.5)', ring: 'border-indigo-500' },
       { name: 'Emerald', hex: '#10b981', glow: 'rgba(16,185,129,0.5)', ring: 'border-emerald-500' },
@@ -1019,35 +416,28 @@
 
     const DEFAULT_PAD_COUNT = 16;
     let activeEditingPadIndex = null;
+    let isInternalUpdate = false;
 
-    /* =====================================================================
-       WEB AUDIO INITIALIZATION
-       ===================================================================== */
     function initAudio() {
       if (!audioCtx) {
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
         audioCtx = new AudioContextClass();
 
-        // Master Gain
         masterGain = audioCtx.createGain();
         const masterVolSlider = document.getElementById('master-volume');
         const initialVol = masterVolSlider ? parseFloat(masterVolSlider.value) : 0.85;
         masterGain.gain.setValueAtTime(initialVol, audioCtx.currentTime);
 
-        // Visualizer Analyser
         analyser = audioCtx.createAnalyser();
         analyser.fftSize = 64;
 
-        // Connexions
         masterGain.connect(audioCtx.destination);
         masterGain.connect(analyser);
 
         try {
           recorderDestination = audioCtx.createMediaStreamDestination();
           masterGain.connect(recorderDestination);
-        } catch (e) {
-          console.warn("MediaStreamDestination non supporté", e);
-        }
+        } catch (e) {}
 
         drawVisualizer();
         updateAudioBadge(true);
@@ -1070,7 +460,6 @@
       }
     }
 
-    // Déverrouillage automatique dès la moindre action sur la page
     function unlockAudioEngine() {
       if (!audioCtx || audioCtx.state === 'suspended') {
         initAudio();
@@ -1080,9 +469,6 @@
     window.addEventListener('touchstart', unlockAudioEngine, { passive: true });
     window.addEventListener('keydown', unlockAudioEngine);
 
-    /* =====================================================================
-       PRESET SOUND FOLDERS / PACKS
-       ===================================================================== */
     const PRESET_FOLDERS = [
       {
         id: 'memes',
@@ -1172,15 +558,11 @@
     const soundFolders = [];
     let currentFolderIndex = 0;
 
-    /**
-     * Synthétiseur de sons intégré haute fidélité (aucun fichier externe requis)
-     */
     function createSyntheticSample(type) {
       if (!audioCtx) initAudio();
       const sampleRate = audioCtx.sampleRate;
 
       switch(type) {
-        /* ----- DOSSIER MEMES ----- */
         case 'vine_boom': {
           const duration = 1.2;
           const buffer = audioCtx.createBuffer(1, sampleRate * duration, sampleRate);
@@ -1270,14 +652,11 @@
             const t = i / sampleRate;
             let f = 0, env = 0;
             if (t < 0.35) {
-              f = 220;
-              env = Math.exp(-(t) * 7);
+              f = 220; env = Math.exp(-(t) * 7);
             } else if (t < 0.7) {
-              f = 207.65;
-              env = Math.exp(-(t - 0.35) * 7);
+              f = 207.65; env = Math.exp(-(t - 0.35) * 7);
             } else {
-              f = 110;
-              env = Math.exp(-(t - 0.7) * 2.5);
+              f = 110; env = Math.exp(-(t - 0.7) * 2.5);
             }
             const wave = Math.tanh(Math.sin(2 * Math.PI * f * t) * 2) * 0.7;
             data[i] = wave * env * 0.8;
@@ -1330,7 +709,6 @@
           return buffer;
         }
 
-        /* ----- DOSSIER BRUITAGES & DRÔLE ----- */
         case 'train': {
           const duration = 1.4;
           const buffer = audioCtx.createBuffer(1, sampleRate * duration, sampleRate);
@@ -1573,7 +951,6 @@
           return buffer;
         }
 
-        /* ----- DOSSIER BEATMAKER ----- */
         case 'kick': {
           const duration = 0.5;
           const buffer = audioCtx.createBuffer(1, sampleRate * duration, sampleRate);
@@ -1685,10 +1062,9 @@
       }
     }
 
-    /**
-     * Sauvegarde automatique locale (localStorage)
-     */
-    function saveToStorage() {
+    // --- SYNCHRONISATION CLOUD LIVE (GUN) ---
+    function pushToCloud() {
+      if (isInternalUpdate) return;
       try {
         const serialized = soundFolders.map(folder => ({
           id: folder.id,
@@ -1706,11 +1082,31 @@
             dataUrl: pad.dataUrl || null
           }))
         }));
+        db.get('state').put({ json: JSON.stringify(serialized), sender: userId });
         localStorage.setItem('soundpad_studio_data_v1', JSON.stringify(serialized));
       } catch (e) {
-        console.warn("Quota localStorage dépassé ou désactivé:", e);
+        console.warn("Cloud sync exception:", e);
       }
     }
+
+    // Écoute des mises à jour réseau
+    db.get('state').on((data) => {
+      if (data && data.json && data.sender !== userId) {
+        try {
+          const remoteData = JSON.parse(data.json);
+          if (Array.isArray(remoteData) && remoteData.length > 0) {
+            isInternalUpdate = true;
+            loadDataIntoSoundFolders(remoteData);
+            renderFolderTabs();
+            renderPads();
+            isInternalUpdate = false;
+            showToast('🔄 Studio mis à jour par un collaborateur', 'info');
+          }
+        } catch(e) {}
+      }
+    });
+
+    document.getElementById('sync-label').innerText = `Sync Live (${userId})`;
 
     function loadDataIntoSoundFolders(data) {
       soundFolders.length = 0;
@@ -1771,7 +1167,6 @@
     }
 
     function initFoldersAndPads() {
-      // 1. Charger depuis le localStorage s'il existe
       try {
         const saved = localStorage.getItem('soundpad_studio_data_v1');
         if (saved) {
@@ -1781,19 +1176,15 @@
             return;
           }
         }
-      } catch (e) {
-        console.warn("Lecture localStorage impossible:", e);
-      }
+      } catch (e) {}
 
-      // 2. Si le fichier a des données pré-packées (export GitHub)
       if (window.INITIAL_PACKED_DATA && Array.isArray(window.INITIAL_PACKED_DATA) && window.INITIAL_PACKED_DATA.length > 0) {
         loadDataIntoSoundFolders(window.INITIAL_PACKED_DATA);
         return;
       }
 
-      // 3. Charger les packs d'origine (MEMES en premier)
       loadDefaultPresets();
-      saveToStorage();
+      pushToCloud();
     }
 
     function getActivePads() {
@@ -1840,7 +1231,6 @@
 
     function switchFolder(folderIdx) {
       if (currentFolderIndex === folderIdx) return;
-      // Arrêt des sons du dossier précédent
       const oldPads = getActivePads();
       oldPads.forEach((_, pIdx) => stopPad(pIdx));
 
@@ -1929,7 +1319,6 @@
         triggerPad(idx);
       });
 
-      // Glisser-déposer sur un pad
       el.addEventListener('dragover', (e) => {
         e.preventDefault();
         el.classList.add('border-indigo-400', 'bg-indigo-950/40');
@@ -1958,9 +1347,6 @@
       }
     }
 
-    /* =====================================================================
-       2. AUDIO TRIGGER ENGINE (PLAY / STOP TOGGLE)
-       ===================================================================== */
     function triggerPad(idx) {
       initAudio();
       if (audioCtx.state === 'suspended') {
@@ -1977,13 +1363,11 @@
         setTimeout(() => padEl.classList.remove('active'), 100);
       }
 
-      // SI LE SON JOUE DÉJÀ : ON LE COUPE IMMÉDIATEMENT
       if (pad.isPlaying && pad.activeSourceNode) {
         stopPad(idx);
         return;
       }
 
-      // SINON ON LE JOUE
       playPad(idx);
     }
 
@@ -2025,7 +1409,6 @@
         pad.activeSourceNode = null;
       }
 
-      // Décoder les données Base64 si le son a été importé ou sauvegardé
       if (!pad.buffer && pad.dataUrl) {
         try {
           const res = await fetch(pad.dataUrl);
@@ -2111,9 +1494,6 @@
       }
     }
 
-    /* =====================================================================
-       3. CUSTOM FILE LOADING & PERSISTENCE
-       ===================================================================== */
     function handleAudioFileLoad(file, padIndex) {
       initAudio();
       if (!file || (!file.type.startsWith('audio') && !file.name.match(/\.(mp3|wav|ogg|flac|m4a|aac)$/i))) {
@@ -2141,8 +1521,8 @@
             padEl.querySelector('.pad-title').textContent = cleanName;
           }
 
-          saveToStorage();
-          showToast(`Son "${cleanName}" assigné & sauvegardé au Pad #${padIndex + 1}`, 'success');
+          pushToCloud();
+          showToast(`Son "${cleanName}" assigné & synchronisé live !`, 'success');
         } catch(err) {
           console.error("Erreur de décodage:", err);
           showToast('Erreur lors de la lecture du fichier audio.', 'error');
@@ -2169,9 +1549,6 @@
       showToast(`${loadedCount} son(s) importé(s) dans le dossier actif !`, 'success');
     }
 
-    /* =====================================================================
-       4. PAD INSPECTOR / MODAL SETTINGS
-       ===================================================================== */
     const modal = document.getElementById('pad-modal');
     const modalPadBadge = document.getElementById('modal-pad-badge');
     const modalPadKeyinfo = document.getElementById('modal-pad-keyinfo');
@@ -2311,9 +1688,9 @@
         updatePadStyle(padEl, COLOR_PRESETS[pad.colorIdx]);
       }
 
-      saveToStorage();
+      pushToCloud();
       closePadSettings();
-      showToast('Paramètres sauvegardés', 'success');
+      showToast('Paramètres enregistrés et synchronisés', 'success');
     });
 
     modalClose.addEventListener('click', closePadSettings);
@@ -2321,9 +1698,6 @@
       if (e.target === modal) closePadSettings();
     });
 
-    /* =====================================================================
-       5. NOUVEAU DOSSIER & SUPPRESSION
-       ===================================================================== */
     const newFolderModal = document.getElementById('new-folder-modal');
     const btnOpenNewFolder = document.getElementById('btn-open-new-folder');
     const btnDeleteFolder = document.getElementById('btn-delete-folder');
@@ -2355,7 +1729,7 @@
         getActivePads().forEach((_, i) => stopPad(i));
         soundFolders.splice(currentFolderIndex, 1);
         currentFolderIndex = Math.max(0, currentFolderIndex - 1);
-        saveToStorage();
+        pushToCloud();
         renderFolderTabs();
         renderPads();
         showToast(`Dossier "${deletedName}" supprimé`, 'info');
@@ -2399,17 +1773,14 @@
         pads: newPads
       });
 
-      saveToStorage();
+      pushToCloud();
       closeNewFolderModal();
       currentFolderIndex = soundFolders.length - 1;
       renderFolderTabs();
       renderPads();
-      showToast(`Dossier "${folderTitle}" créé et sauvegardé !`, 'success');
+      showToast(`Dossier "${folderTitle}" créé et synchronisé live !`, 'success');
     });
 
-    /* =====================================================================
-       6. RACCOURCIS CLAVIER
-       ===================================================================== */
     const pressedKeys = new Set();
 
     window.addEventListener('keydown', (e) => {
@@ -2432,9 +1803,6 @@
       pressedKeys.delete(key);
     });
 
-    /* =====================================================================
-       7. ENREGISTREMENT MASTER
-       ===================================================================== */
     const btnRecord = document.getElementById('btn-record');
     const recDot = document.getElementById('rec-dot');
     const recLabel = document.getElementById('rec-label');
@@ -2507,9 +1875,6 @@
       recTimer.textContent = `${m}:${s}`;
     }
 
-    /* =====================================================================
-       8. MÉTRONOME
-       ===================================================================== */
     const btnMetronome = document.getElementById('btn-metronome');
     const bpmInput = document.getElementById('bpm-input');
 
@@ -2559,9 +1924,6 @@
       osc.stop(audioCtx.currentTime + 0.06);
     }
 
-    /* =====================================================================
-       9. MASTER VISUALIZER (SPECTRE AUDIO)
-       ===================================================================== */
     const canvas = document.getElementById('visualizer-canvas');
     const canvasCtx = canvas.getContext('2d');
     const peakLed = document.getElementById('peak-led');
@@ -2604,9 +1966,6 @@
       }
     }
 
-    /* =====================================================================
-       10. CONTRÔLES GÉNÉRAUX & EXPORT AUTONOME DU SITE
-       ===================================================================== */
     const masterVolSlider = document.getElementById('master-volume');
     masterVolSlider.addEventListener('input', (e) => {
       initAudio();
@@ -2647,7 +2006,7 @@
         localStorage.removeItem('soundpad_studio_data_v1');
       } catch(e) {}
       loadDefaultPresets();
-      saveToStorage();
+      pushToCloud();
       renderFolderTabs();
       renderPads();
       showToast('Banques d\'origine rechargées', 'info');
@@ -2662,7 +2021,6 @@
       });
     }
 
-    // EXPORT index.html AUTONOME POUR GITHUB
     const btnExportSite = document.getElementById('btn-export-site');
     if (btnExportSite) {
       btnExportSite.addEventListener('click', () => {
@@ -2707,7 +2065,7 @@
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
-        showToast('Fichier index.html téléchargé avec succès !', 'success');
+        showToast('Fichier index.html téléchargé !', 'success');
       });
     }
 
@@ -2738,9 +2096,6 @@
       }
     });
 
-    /* =====================================================================
-       11. TOAST NOTIFICATION UTILITY
-       ===================================================================== */
     function showToast(message, type = 'info') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
@@ -2769,9 +2124,6 @@
       }, 3000);
     }
 
-    /* =====================================================================
-       12. INITIALIZATION
-       ===================================================================== */
     window.addEventListener('DOMContentLoaded', () => {
       initFoldersAndPads();
       renderFolderTabs();
@@ -2779,5 +2131,5 @@
     });
   </script>
 
-</body></html>
+</body>
 </html>
